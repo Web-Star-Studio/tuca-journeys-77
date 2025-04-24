@@ -12,3 +12,7 @@ export type { Booking as DatabaseBooking } from './database';
 // Re-export product types with explicit naming
 export type { Product as UIProduct } from './product';
 export type { Product as DatabaseProduct } from './database';
+
+// Explicitly re-export user preferences to resolve ambiguity
+export type { UserPreferences as AuthUserPreferences } from './auth';
+export type { UserPreferences as DatabaseUserPreferences } from './database';

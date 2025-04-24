@@ -132,8 +132,8 @@ export const getUserBookings = async (userId: string) => {
     .from('bookings')
     .select(`
       *,
-      tours:tour_id(id, title, description, image_url, duration, price),
-      accommodations:accommodation_id(id, title, description, image_url, price_per_night)
+      tours:tour_id(*),
+      accommodations:accommodation_id(*)
     `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -145,6 +145,7 @@ export const getUserBookings = async (userId: string) => {
   
   // Map the database bookings to the Booking interface
   const bookings: Booking[] = data.map(dbBooking => {
+    // Safely handle the potentially undefined or error results from the join
     const tour = dbBooking.tours as Tour | null;
     const accommodation = dbBooking.accommodations as Accommodation | null;
 

@@ -46,3 +46,4 @@ export interface UserPreferences {
   activity_preferences: ActivityPreferences;
   communication_preferences: CommunicationPreferences;
 }
+
