@@ -1,7 +1,6 @@
 
 import { Tour, Accommodation } from './database';
 
-// Expanding the Booking interface to match the expected properties in the UI
 export interface Booking {
   id: string;
   user_id?: string;
@@ -25,7 +24,6 @@ export interface Booking {
   accommodations?: Accommodation;
 }
 
-// Define a new interface for the database booking structure
 export interface BookingDB {
   id: number;
   user_id: string;
@@ -35,17 +33,16 @@ export interface BookingDB {
   end_date: string;
   guests: number;
   total_price: number;
-  status: string;
-  payment_status: string;
+  status: 'confirmed' | 'pending' | 'cancelled';
+  payment_status: 'paid' | 'pending' | 'refunded';
   payment_method?: string | null;
   special_requests?: string | null;
   created_at: string;
   updated_at: string;
-  tours?: Tour;
-  accommodations?: Accommodation;
+  tours?: Tour | null;
+  accommodations?: Accommodation | null;
 }
 
-// Type for creating a booking
 export interface CreateBookingDTO {
   user_id: string;
   tour_id?: number | null;
@@ -54,8 +51,8 @@ export interface CreateBookingDTO {
   end_date: string;
   guests: number;
   total_price: number;
-  status: string;
-  payment_status: string;
+  status: 'confirmed' | 'pending' | 'cancelled';
+  payment_status: 'paid' | 'pending' | 'refunded';
   payment_method?: string | null;
   special_requests?: string | null;
 }

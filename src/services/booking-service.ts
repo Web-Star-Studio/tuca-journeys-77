@@ -37,7 +37,11 @@ export class BookingService extends BaseApiService {
     const { data, error } = await this.supabase
       .from('bookings')
       .insert([bookingData])
-      .select()
+      .select(`
+        *,
+        tours(*),
+        accommodations(*)
+      `)
       .single();
     
     if (error) {
@@ -61,10 +65,14 @@ export class BookingService extends BaseApiService {
     
     const { data, error } = await this.supabase
       .from('bookings')
-      .update({ status: 'cancelled' })
+      .update({ status: 'cancelled' as const })
       .eq('id', numericBookingId)
       .eq('user_id', userId)
-      .select()
+      .select(`
+        *,
+        tours(*),
+        accommodations(*)
+      `)
       .single();
       
     if (error) {
@@ -79,19 +87,23 @@ export class BookingService extends BaseApiService {
    * Helper method to map database booking to application booking model
    */
   private mapBookingFromDB(bookingDB: BookingDB): UIBooking {
+    const itemType = bookingDB.tour_id ? 'tour' as const : 
+                    bookingDB.accommodation_id ? 'accommodation' as const : 
+                    'package' as const;
+
     return {
       id: bookingDB.id.toString(),
       user_id: bookingDB.user_id,
       user_name: bookingDB.tours?.title || bookingDB.accommodations?.title || 'User',
-      user_email: '',  // This would ideally come from user profiles
-      item_type: bookingDB.tour_id ? 'tour' : bookingDB.accommodation_id ? 'accommodation' : 'package',
+      user_email: '', // This would ideally come from user profiles
+      item_type: itemType,
       item_name: bookingDB.tours?.title || bookingDB.accommodations?.title || 'Booking',
       start_date: bookingDB.start_date,
       end_date: bookingDB.end_date,
       guests: bookingDB.guests,
       total_price: bookingDB.total_price,
-      status: bookingDB.status as 'confirmed' | 'pending' | 'cancelled',
-      payment_status: bookingDB.payment_status as 'paid' | 'pending' | 'refunded',
+      status: bookingDB.status,
+      payment_status: bookingDB.payment_status,
       payment_method: bookingDB.payment_method,
       special_requests: bookingDB.special_requests,
       created_at: bookingDB.created_at,
