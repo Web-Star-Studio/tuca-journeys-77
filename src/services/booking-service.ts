@@ -15,8 +15,8 @@ export class BookingService extends BaseApiService {
       .from('bookings')
       .select(`
         *,
-        tours(*),
-        accommodations(*)
+        tours:tour_id(*),
+        accommodations:accommodation_id(*)
       `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
@@ -39,8 +39,8 @@ export class BookingService extends BaseApiService {
       .insert([bookingData])
       .select(`
         *,
-        tours(*),
-        accommodations(*)
+        tours:tour_id(*),
+        accommodations:accommodation_id(*)
       `)
       .single();
     
@@ -70,8 +70,8 @@ export class BookingService extends BaseApiService {
       .eq('user_id', userId)
       .select(`
         *,
-        tours(*),
-        accommodations(*)
+        tours:tour_id(*),
+        accommodations:accommodation_id(*)
       `)
       .single();
       
@@ -91,13 +91,23 @@ export class BookingService extends BaseApiService {
                     bookingDB.accommodation_id ? 'accommodation' as const : 
                     'package' as const;
 
+    // Safely handle potentially null related objects
+    const tours = bookingDB.tours || null;
+    const accommodations = bookingDB.accommodations || null;
+
+    // Get item name safely
+    const itemName = 
+      (tours && typeof tours === 'object' && tours.title) || 
+      (accommodations && typeof accommodations === 'object' && accommodations.title) || 
+      'Booking';
+
     return {
       id: bookingDB.id.toString(),
       user_id: bookingDB.user_id,
-      user_name: bookingDB.tours?.title || bookingDB.accommodations?.title || 'User',
+      user_name: 'User', // Default value
       user_email: '', // This would ideally come from user profiles
       item_type: itemType,
-      item_name: bookingDB.tours?.title || bookingDB.accommodations?.title || 'Booking',
+      item_name: itemName,
       start_date: bookingDB.start_date,
       end_date: bookingDB.end_date,
       guests: bookingDB.guests,
@@ -110,8 +120,8 @@ export class BookingService extends BaseApiService {
       updated_at: bookingDB.updated_at,
       tour_id: bookingDB.tour_id,
       accommodation_id: bookingDB.accommodation_id,
-      tours: bookingDB.tours || null,
-      accommodations: bookingDB.accommodations || null
+      tours: tours,
+      accommodations: accommodations
     };
   }
 }
