@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { Tour, Accommodation, Booking, UserProfile } from '@/types/database';
 import { Package } from '@/data/types/packageTypes';
+import { Booking as UIBooking } from '@/types/bookings';
 
 // Tours API
 export const getToursFromDB = async () => {
@@ -77,6 +78,7 @@ export const getAccommodationByIdFromDB = async (id: number) => {
   return data as Accommodation;
 };
 
+// Bookings API
 export const createBooking = async (booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) => {
   console.log("Creating booking:", booking);
   
@@ -126,14 +128,14 @@ export const createBooking = async (booking: Omit<Booking, 'id' | 'created_at' |
   return responseBooking;
 };
 
-export const getUserBookings = async (userId: string) => {
+export const getUserBookings = async (userId: string): Promise<UIBooking[]> => {
   console.log(`Fetching bookings for user: ${userId}`);
   const { data, error } = await supabase
     .from('bookings')
     .select(`
       *,
-      tours:tour_id(*),
-      accommodations:accommodation_id(*)
+      tours:tour_id(id, title, description, short_description, image_url, category, price, duration),
+      accommodations:accommodation_id(id, title, description, short_description, image_url, category, price_per_night)
     `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -149,27 +151,44 @@ export const getUserBookings = async (userId: string) => {
     const tourData = dbBooking.tours || null;
     const accommodationData = dbBooking.accommodations || null;
     
-    // Check if the relations returned errors
+    // Check if the relations returned errors or are null
     const hasTourError = tourData && typeof tourData === 'object' && 'error' in tourData;
     const hasAccommodationError = accommodationData && typeof accommodationData === 'object' && 'error' in accommodationData;
+    
+    // Determine item type and name safely
+    let itemType: 'tour' | 'accommodation' | 'package' = 'package';
+    let itemName = 'Booking';
+    
+    if (dbBooking.tour_id && tourData && !hasTourError) {
+      itemType = 'tour';
+      itemName = tourData.title || 'Tour';
+    } else if (dbBooking.accommodation_id && accommodationData && !hasAccommodationError) {
+      itemType = 'accommodation';
+      itemName = accommodationData.title || 'Accommodation';
+    }
     
     return {
       id: dbBooking.id.toString(),
       user_id: dbBooking.user_id,
-      tour_id: dbBooking.tour_id,
-      accommodation_id: dbBooking.accommodation_id,
+      user_name: 'User', // Default value
+      user_email: '', // This would ideally come from user profiles
+      item_type: itemType,
+      item_name: itemName,
       start_date: dbBooking.start_date,
       end_date: dbBooking.end_date,
-      number_of_guests: dbBooking.guests,
+      guests: dbBooking.guests,
       total_price: dbBooking.total_price,
       status: dbBooking.status as 'confirmed' | 'pending' | 'cancelled',
-      notes: dbBooking.special_requests || undefined,
+      payment_status: dbBooking.payment_status as 'paid' | 'pending' | 'refunded',
+      payment_method: dbBooking.payment_method,
+      special_requests: dbBooking.special_requests,
       created_at: dbBooking.created_at,
       updated_at: dbBooking.updated_at,
-      // Handle relation data safely
-      tours: hasTourError ? null : (tourData as Tour | null),
-      accommodations: hasAccommodationError ? null : (accommodationData as Accommodation | null)
-    };
+      tour_id: dbBooking.tour_id,
+      accommodation_id: dbBooking.accommodation_id,
+      tours: hasTourError ? null : tourData,
+      accommodations: hasAccommodationError ? null : accommodationData
+    } as UIBooking;
   });
   
   return bookings;
@@ -259,3 +278,4 @@ export const hasRole = async (userId: string, roleName: string): Promise<boolean
     return false;
   }
 };
+

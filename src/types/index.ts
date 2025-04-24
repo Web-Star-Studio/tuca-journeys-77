@@ -3,6 +3,8 @@
 export * from './database';
 export * from './event';
 export * from './partner';
+
+// Create specific aliases to avoid ambiguity
 export type { Booking as BookingDB } from './database';
 export type { Product as ProductDB } from './database';
 export * from './bookings';
