@@ -1,6 +1,7 @@
 
 import { supabase } from '@/lib/supabase';
-import { Booking as UIBooking, BookingDB, CreateBookingDTO } from '@/types/bookings';
+import { Booking as UIBooking } from '@/types/bookings';
+import { CreateBookingDTO } from '@/types/bookings';
 import { Tour, Accommodation, UserProfile } from '@/types/database';
 import { Package } from '@/data/types/packageTypes';
 
@@ -147,10 +148,14 @@ class ApiService {
     const tours = bookingDB.tours || null;
     const accommodations = bookingDB.accommodations || null;
 
-    // Get item name safely
+    // Check for errors in related data
+    const hasTourError = tours && typeof tours === 'object' && 'error' in tours;
+    const hasAccommodationError = accommodations && typeof accommodations === 'object' && 'error' in accommodations;
+
+    // Get item name safely with optional chaining
     const itemName = 
-      (tours && typeof tours === 'object' && tours.title) || 
-      (accommodations && typeof accommodations === 'object' && accommodations.title) || 
+      (tours && typeof tours === 'object' && !hasTourError && tours?.title) || 
+      (accommodations && typeof accommodations === 'object' && !hasAccommodationError && accommodations?.title) || 
       'Booking';
 
     return {
@@ -174,8 +179,8 @@ class ApiService {
       updated_at: bookingDB.updated_at,
       tour_id: bookingDB.tour_id,
       accommodation_id: bookingDB.accommodation_id,
-      tours: tours,
-      accommodations: accommodations
+      tours: hasTourError ? null : tours,
+      accommodations: hasAccommodationError ? null : accommodations
     };
   }
 

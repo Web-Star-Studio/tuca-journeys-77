@@ -169,7 +169,8 @@ export const getUserBookings = async (userId: string): Promise<UIBooking[]> => {
       itemName = (accommodationData as any)?.title || 'Accommodation';
     }
     
-    return {
+    // Create the booking object with correct typing
+    const uiBooking: UIBooking = {
       id: dbBooking.id.toString(),
       user_id: dbBooking.user_id,
       user_name: 'User', // Default value
@@ -188,9 +189,12 @@ export const getUserBookings = async (userId: string): Promise<UIBooking[]> => {
       updated_at: dbBooking.updated_at,
       tour_id: dbBooking.tour_id,
       accommodation_id: dbBooking.accommodation_id,
+      // Safely handle tour and accommodation data
       tours: hasTourError ? null : tourData,
       accommodations: hasAccommodationError ? null : accommodationData
-    } as UIBooking;
+    };
+    
+    return uiBooking;
   });
   
   return bookings;
