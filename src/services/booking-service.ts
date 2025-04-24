@@ -27,7 +27,7 @@ export class BookingService extends BaseApiService {
     }
     
     // Transform database bookings into the application booking model
-    return (data || []).map((bookingDB: BookingDB) => this.mapBookingFromDB(bookingDB));
+    return (data || []).map((bookingDB: any) => this.mapBookingFromDB(bookingDB));
   }
 
   /**
@@ -49,7 +49,7 @@ export class BookingService extends BaseApiService {
       throw error;
     }
     
-    return this.mapBookingFromDB(data as BookingDB);
+    return this.mapBookingFromDB(data as any);
   }
 
   /**
@@ -65,7 +65,7 @@ export class BookingService extends BaseApiService {
     
     const { data, error } = await this.supabase
       .from('bookings')
-      .update({ status: 'cancelled' as const })
+      .update({ status: 'cancelled' })
       .eq('id', numericBookingId)
       .eq('user_id', userId)
       .select(`
@@ -80,13 +80,13 @@ export class BookingService extends BaseApiService {
       throw error;
     }
     
-    return this.mapBookingFromDB(data as BookingDB);
+    return this.mapBookingFromDB(data as any);
   }
 
   /**
    * Helper method to map database booking to application booking model
    */
-  private mapBookingFromDB(bookingDB: BookingDB): UIBooking {
+  private mapBookingFromDB(bookingDB: any): UIBooking {
     const itemType = bookingDB.tour_id ? 'tour' as const : 
                     bookingDB.accommodation_id ? 'accommodation' as const : 
                     'package' as const;
@@ -102,8 +102,8 @@ export class BookingService extends BaseApiService {
       end_date: bookingDB.end_date,
       guests: bookingDB.guests,
       total_price: bookingDB.total_price,
-      status: bookingDB.status,
-      payment_status: bookingDB.payment_status,
+      status: bookingDB.status as 'confirmed' | 'pending' | 'cancelled',
+      payment_status: bookingDB.payment_status as 'paid' | 'pending' | 'refunded',
       payment_method: bookingDB.payment_method,
       special_requests: bookingDB.special_requests,
       created_at: bookingDB.created_at,

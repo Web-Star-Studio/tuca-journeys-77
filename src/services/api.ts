@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { UIBooking, DatabaseBooking, Tour, Accommodation, UserProfile } from '@/types';
 import { BookingDB, CreateBookingDTO } from '@/types/bookings';
@@ -99,7 +98,7 @@ class ApiService {
     }
     
     // Transform database bookings into the application booking model
-    return (data || []).map((bookingDB: BookingDB) => this.mapBookingFromDB(bookingDB));
+    return (data || []).map((bookingDB: any) => this.mapBookingFromDB(bookingDB));
   }
 
   async createBooking(bookingData: CreateBookingDTO): Promise<UIBooking> {
@@ -114,7 +113,7 @@ class ApiService {
       throw error;
     }
     
-    return this.mapBookingFromDB(data as BookingDB);
+    return this.mapBookingFromDB(data as any);
   }
 
   async cancelBooking(bookingId: string, userId: string): Promise<UIBooking> {
@@ -138,11 +137,11 @@ class ApiService {
       throw error;
     }
     
-    return this.mapBookingFromDB(data as BookingDB);
+    return this.mapBookingFromDB(data as any);
   }
 
   // Helper method to map database booking to application booking model
-  private mapBookingFromDB(bookingDB: BookingDB): UIBooking {
+  private mapBookingFromDB(bookingDB: any): UIBooking {
     return {
       id: bookingDB.id.toString(),
       user_id: bookingDB.user_id,

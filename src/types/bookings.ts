@@ -20,8 +20,8 @@ export interface Booking {
   updated_at?: string;
   tour_id?: number | null;
   accommodation_id?: number | null;
-  tours?: Tour;
-  accommodations?: Accommodation;
+  tours?: Tour | null;
+  accommodations?: Accommodation | null;
 }
 
 export interface BookingDB {
@@ -33,8 +33,8 @@ export interface BookingDB {
   end_date: string;
   guests: number;
   total_price: number;
-  status: 'confirmed' | 'pending' | 'cancelled';
-  payment_status: 'paid' | 'pending' | 'refunded';
+  status: string;
+  payment_status: string;
   payment_method?: string | null;
   special_requests?: string | null;
   created_at: string;

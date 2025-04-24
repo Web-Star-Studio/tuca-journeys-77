@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { Tour, Accommodation, Booking, UserProfile } from '@/types/database';
 import { Package } from '@/data/types/packageTypes';
@@ -92,7 +91,7 @@ export const createBooking = async (booking: Omit<Booking, 'id' | 'created_at' |
     end_date: booking.end_date,
     guests: booking.number_of_guests, // Map from number_of_guests to guests
     total_price: booking.total_price,
-    status: booking.status,
+    status: booking.status as 'confirmed' | 'pending' | 'cancelled',
     payment_status: booking.status === 'confirmed' ? 'paid' : 'pending',
     payment_method: booking.payment_method || null,
     special_requests: booking.special_requests || null
@@ -155,7 +154,7 @@ export const getUserBookings = async (userId: string) => {
     end_date: dbBooking.end_date,
     number_of_guests: dbBooking.guests, // Map from guests to number_of_guests
     total_price: dbBooking.total_price,
-    status: dbBooking.status,
+    status: dbBooking.status as 'pending' | 'confirmed' | 'cancelled',
     notes: dbBooking.special_requests || undefined,
     created_at: dbBooking.created_at,
     updated_at: dbBooking.updated_at,
