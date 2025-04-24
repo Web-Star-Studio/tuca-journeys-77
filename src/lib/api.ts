@@ -161,10 +161,12 @@ export const getUserBookings = async (userId: string): Promise<UIBooking[]> => {
     
     if (dbBooking.tour_id && tourData && !hasTourError) {
       itemType = 'tour';
-      itemName = tourData.title || 'Tour';
+      // Using optional chaining and nullish coalescing to safely access title
+      itemName = (tourData as any)?.title || 'Tour';
     } else if (dbBooking.accommodation_id && accommodationData && !hasAccommodationError) {
       itemType = 'accommodation';
-      itemName = accommodationData.title || 'Accommodation';
+      // Using optional chaining and nullish coalescing to safely access title
+      itemName = (accommodationData as any)?.title || 'Accommodation';
     }
     
     return {
@@ -278,4 +280,3 @@ export const hasRole = async (userId: string, roleName: string): Promise<boolean
     return false;
   }
 };
-
