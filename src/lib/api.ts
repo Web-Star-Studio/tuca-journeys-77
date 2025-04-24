@@ -77,7 +77,6 @@ export const getAccommodationByIdFromDB = async (id: number) => {
   return data as Accommodation;
 };
 
-// Bookings API
 export const createBooking = async (booking: Omit<Booking, 'id' | 'created_at' | 'updated_at'>) => {
   console.log("Creating booking:", booking);
   
@@ -133,8 +132,8 @@ export const getUserBookings = async (userId: string) => {
     .from('bookings')
     .select(`
       *,
-      tours:tour_id(*),
-      accommodations:accommodation_id(*)
+      tours:tour_id(id, title, description, image_url, duration, price),
+      accommodations:accommodation_id(id, title, description, image_url, price_per_night)
     `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -146,8 +145,8 @@ export const getUserBookings = async (userId: string) => {
   
   // Map the database bookings to the Booking interface
   const bookings: Booking[] = data.map(dbBooking => {
-    const tours = dbBooking.tours || null;
-    const accommodations = dbBooking.accommodations || null;
+    const tour = dbBooking.tours as Tour | null;
+    const accommodation = dbBooking.accommodations as Accommodation | null;
 
     return {
       id: dbBooking.id.toString(),
@@ -162,8 +161,8 @@ export const getUserBookings = async (userId: string) => {
       notes: dbBooking.special_requests || undefined,
       created_at: dbBooking.created_at,
       updated_at: dbBooking.updated_at,
-      tours: tours,
-      accommodations: accommodations
+      tours: tour,
+      accommodations: accommodation
     };
   });
   

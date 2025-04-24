@@ -1113,7 +1113,23 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      accommodation_type:
+        | "hotel"
+        | "resort"
+        | "pousada"
+        | "hostel"
+        | "apartment"
+        | "camping"
+      activity_level: "low" | "moderate" | "high" | "extreme"
+      budget_range: "economy" | "moderate" | "premium" | "luxury"
+      travel_style:
+        | "leisure"
+        | "adventure"
+        | "culture"
+        | "luxury"
+        | "budget"
+        | "family"
+        | "business"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1228,6 +1244,26 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      accommodation_type: [
+        "hotel",
+        "resort",
+        "pousada",
+        "hostel",
+        "apartment",
+        "camping",
+      ],
+      activity_level: ["low", "moderate", "high", "extreme"],
+      budget_range: ["economy", "moderate", "premium", "luxury"],
+      travel_style: [
+        "leisure",
+        "adventure",
+        "culture",
+        "luxury",
+        "budget",
+        "family",
+        "business",
+      ],
+    },
   },
 } as const
