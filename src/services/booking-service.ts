@@ -110,8 +110,8 @@ export class BookingService extends BaseApiService {
       updated_at: bookingDB.updated_at,
       tour_id: bookingDB.tour_id,
       accommodation_id: bookingDB.accommodation_id,
-      tours: bookingDB.tours,
-      accommodations: bookingDB.accommodations
+      tours: bookingDB.tours || null,
+      accommodations: bookingDB.accommodations || null
     };
   }
 }

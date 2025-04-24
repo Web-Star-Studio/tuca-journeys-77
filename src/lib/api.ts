@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 import { Tour, Accommodation, Booking, UserProfile } from '@/types/database';
 import { Package } from '@/data/types/packageTypes';
@@ -112,16 +113,22 @@ export const createBooking = async (booking: Omit<Booking, 'id' | 'created_at' |
   const responseBooking: Booking = {
     id: data.id.toString(),
     user_id: data.user_id,
-    tour_id: data.tour_id,
-    accommodation_id: data.accommodation_id,
+    user_name: '', // This would come from user profiles in a real scenario
+    user_email: '', // This would come from user profiles in a real scenario
+    item_type: data.tour_id ? 'tour' : data.accommodation_id ? 'accommodation' : 'package',
+    item_name: '', // This would come from the tour/accommodation/package in a real scenario
     start_date: data.start_date,
     end_date: data.end_date,
-    number_of_guests: data.guests, // Map from guests to number_of_guests
+    guests: data.guests, // Map from guests to number_of_guests
     total_price: data.total_price,
-    status: data.status,
-    notes: data.special_requests || undefined,
+    status: data.status as 'confirmed' | 'pending' | 'cancelled',
+    payment_status: data.payment_status as 'paid' | 'pending' | 'refunded',
+    payment_method: data.payment_method,
+    special_requests: data.special_requests,
     created_at: data.created_at,
-    updated_at: data.updated_at
+    updated_at: data.updated_at,
+    tour_id: data.tour_id,
+    accommodation_id: data.accommodation_id
   };
   
   return responseBooking;
@@ -148,18 +155,24 @@ export const getUserBookings = async (userId: string) => {
   const bookings: Booking[] = data.map(dbBooking => ({
     id: dbBooking.id.toString(),
     user_id: dbBooking.user_id,
-    tour_id: dbBooking.tour_id,
-    accommodation_id: dbBooking.accommodation_id,
+    user_name: '', // This would come from user profiles in a real scenario
+    user_email: '', // This would come from user profiles in a real scenario
+    item_type: dbBooking.tour_id ? 'tour' : dbBooking.accommodation_id ? 'accommodation' : 'package',
+    item_name: dbBooking.tours?.title || dbBooking.accommodations?.title || 'Booking',
     start_date: dbBooking.start_date,
     end_date: dbBooking.end_date,
-    number_of_guests: dbBooking.guests, // Map from guests to number_of_guests
+    guests: dbBooking.guests, 
     total_price: dbBooking.total_price,
-    status: dbBooking.status as 'pending' | 'confirmed' | 'cancelled',
-    notes: dbBooking.special_requests || undefined,
+    status: dbBooking.status as 'confirmed' | 'pending' | 'cancelled',
+    payment_status: dbBooking.payment_status as 'paid' | 'pending' | 'refunded',
+    payment_method: dbBooking.payment_method,
+    special_requests: dbBooking.special_requests,
     created_at: dbBooking.created_at,
     updated_at: dbBooking.updated_at,
-    tours: dbBooking.tours,
-    accommodations: dbBooking.accommodations
+    tour_id: dbBooking.tour_id,
+    accommodation_id: dbBooking.accommodation_id,
+    tours: dbBooking.tours || null,
+    accommodations: dbBooking.accommodations || null
   }));
   
   return bookings;

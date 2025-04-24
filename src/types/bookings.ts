@@ -39,8 +39,8 @@ export interface BookingDB {
   special_requests?: string | null;
   created_at: string;
   updated_at: string;
-  tours?: Tour | null;
-  accommodations?: Accommodation | null;
+  tours?: any;
+  accommodations?: any;
 }
 
 export interface CreateBookingDTO {
