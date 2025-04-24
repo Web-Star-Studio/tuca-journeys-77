@@ -11,9 +11,9 @@ const SignUpProgress = ({ currentStep, totalSteps }: SignUpProgressProps) => {
 
   return (
     <div className="w-full space-y-2">
-      <Progress value={progress} className="h-2" />
-      <p className="text-sm text-muted-foreground text-center">
-        Passo {currentStep} de {totalSteps}
+      <Progress value={progress} className="h-1.5 bg-tuca-light-blue" />
+      <p className="text-sm text-muted-foreground text-center animate-fade-in">
+        Step {currentStep} of {totalSteps}
       </p>
     </div>
   );

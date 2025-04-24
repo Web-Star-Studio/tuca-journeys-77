@@ -132,8 +132,8 @@ export const getUserBookings = async (userId: string) => {
     .from('bookings')
     .select(`
       *,
-      tours:tour_id(*),
-      accommodations:accommodation_id(*)
+      tours:tour_id!tour_id(id, title, description, image_url, duration, price),
+      accommodations:accommodation_id!accommodation_id(id, title, description, image_url, price_per_night)
     `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -144,28 +144,23 @@ export const getUserBookings = async (userId: string) => {
   }
   
   // Map the database bookings to the Booking interface
-  const bookings: Booking[] = data.map(dbBooking => {
-    // Safely handle the potentially undefined or error results from the join
-    const tour = dbBooking.tours as Tour | null;
-    const accommodation = dbBooking.accommodations as Accommodation | null;
-
-    return {
-      id: dbBooking.id.toString(),
-      user_id: dbBooking.user_id,
-      tour_id: dbBooking.tour_id,
-      accommodation_id: dbBooking.accommodation_id,
-      start_date: dbBooking.start_date,
-      end_date: dbBooking.end_date,
-      number_of_guests: dbBooking.guests, // Map from guests to number_of_guests
-      total_price: dbBooking.total_price,
-      status: dbBooking.status as 'confirmed' | 'pending' | 'cancelled',
-      notes: dbBooking.special_requests || undefined,
-      created_at: dbBooking.created_at,
-      updated_at: dbBooking.updated_at,
-      tours: tour,
-      accommodations: accommodation
-    };
-  });
+  const bookings: Booking[] = data.map(dbBooking => ({
+    id: dbBooking.id.toString(),
+    user_id: dbBooking.user_id,
+    tour_id: dbBooking.tour_id,
+    accommodation_id: dbBooking.accommodation_id,
+    start_date: dbBooking.start_date,
+    end_date: dbBooking.end_date,
+    number_of_guests: dbBooking.guests,
+    total_price: dbBooking.total_price,
+    status: dbBooking.status as 'confirmed' | 'pending' | 'cancelled',
+    notes: dbBooking.special_requests || undefined,
+    created_at: dbBooking.created_at,
+    updated_at: dbBooking.updated_at,
+    // Safely cast the joined data
+    tours: dbBooking.tours as Tour | null,
+    accommodations: dbBooking.accommodations as Accommodation | null
+  }));
   
   return bookings;
 };

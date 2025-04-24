@@ -7,8 +7,8 @@ import SignUpProgress from "./SignUpProgress";
 import BasicInfoStep from "./BasicInfoStep";
 import TravelPartyStep from "./TravelPartyStep";
 import PreferencesStep from "./PreferencesStep";
-import { SignUpFormData, TravelParty, TravelPreferences, UserPreferences } from "@/types/auth";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SignUpFormData, TravelParty, TravelPreferences } from "@/types/auth";
+import { Card } from "@/components/ui/card";
 
 const TOTAL_STEPS = 3;
 
@@ -47,11 +47,10 @@ const EnhancedSignUp = () => {
 
       if (error) throw error;
 
-      // Redirect to dashboard or verification page
-      toast.success("Conta criada com sucesso! Verifique seu email para confirmar seu cadastro.");
+      toast.success("Account created successfully! Please check your email to confirm your registration.");
       navigate("/login");
     } catch (error: any) {
-      toast.error(`Erro ao criar conta: ${error.message}`);
+      toast.error(`Error creating account: ${error.message}`);
     }
   };
 
@@ -60,36 +59,31 @@ const EnhancedSignUp = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl text-center">
-            {currentStep === 1 && "Criar Conta"}
-            {currentStep === 2 && "Informações de Viagem"}
-            {currentStep === 3 && "Suas Preferências"}
-          </CardTitle>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-tuca-ocean-blue/5 via-tuca-medium-blue/5 to-tuca-light-blue/5 py-12 px-4 sm:px-6 lg:px-8 backdrop-blur-sm">
+      <Card className="w-full max-w-md border-0 bg-white/70 backdrop-blur-md shadow-xl">
+        <div className="p-6 space-y-6">
           <SignUpProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} />
-        </CardHeader>
-        
-        <CardContent>
-          {currentStep === 1 && (
-            <BasicInfoStep onNext={handleBasicInfoSubmit} />
-          )}
           
-          {currentStep === 2 && (
-            <TravelPartyStep 
-              onNext={handleTravelPartySubmit}
-              onBack={handleBack}
-            />
-          )}
-          
-          {currentStep === 3 && (
-            <PreferencesStep
-              onNext={handlePreferencesSubmit}
-              onBack={handleBack}
-            />
-          )}
-        </CardContent>
+          <div className="mt-8">
+            {currentStep === 1 && (
+              <BasicInfoStep onNext={handleBasicInfoSubmit} />
+            )}
+            
+            {currentStep === 2 && (
+              <TravelPartyStep 
+                onNext={handleTravelPartySubmit}
+                onBack={handleBack}
+              />
+            )}
+            
+            {currentStep === 3 && (
+              <PreferencesStep
+                onNext={handlePreferencesSubmit}
+                onBack={handleBack}
+              />
+            )}
+          </div>
+        </div>
       </Card>
     </div>
   );

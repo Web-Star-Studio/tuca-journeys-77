@@ -2,12 +2,12 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { MessageCircle } from "lucide-react";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -45,64 +45,77 @@ const TravelPartyStep = ({ onNext, onBack }: TravelPartyStepProps) => {
   });
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onNext)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="usually_travel_with"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Com quem você costuma viajar?</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={(value) => field.onChange([value])}
-                  defaultValue={field.value[0]}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione uma opção" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="solo">Sozinho</SelectItem>
-                    <SelectItem value="couple">Casal</SelectItem>
-                    <SelectItem value="family">Família</SelectItem>
-                    <SelectItem value="friends">Amigos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="typical_group_size"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Tamanho típico do grupo</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min="1"
-                  {...field}
-                  onChange={e => field.onChange(parseInt(e.target.value))}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex gap-4 pt-4">
-          <Button variant="outline" onClick={onBack} className="w-full">
-            Voltar
-          </Button>
-          <Button type="submit" className="w-full">
-            Próximo
-          </Button>
+    <div className="space-y-6">
+      <div className="flex items-start gap-4 animate-fade-in">
+        <div className="h-8 w-8 rounded-full bg-tuca-ocean-blue flex items-center justify-center shrink-0">
+          <MessageCircle className="h-4 w-4 text-white" />
         </div>
-      </form>
-    </Form>
+        <div className="bg-tuca-light-blue p-4 rounded-2xl rounded-tl-none">
+          <p className="text-tuca-ocean-blue">
+            Great! Now, tell me about how you prefer to travel. This will help me personalize your experience.
+          </p>
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onNext)} className="space-y-4 ml-12">
+          <FormField
+            control={form.control}
+            name="usually_travel_with"
+            render={({ field }) => (
+              <FormItem className="animate-fade-in" style={{ animationDelay: "200ms" }}>
+                <FormControl>
+                  <Select
+                    onValueChange={(value) => field.onChange([value])}
+                    defaultValue={field.value[0]}
+                  >
+                    <SelectTrigger className="bg-white/50 backdrop-blur-sm">
+                      <SelectValue placeholder="Who do you usually travel with?" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="solo">Solo</SelectItem>
+                      <SelectItem value="couple">Couple</SelectItem>
+                      <SelectItem value="family">Family</SelectItem>
+                      <SelectItem value="friends">Friends</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="typical_group_size"
+            render={({ field }) => (
+              <FormItem className="animate-fade-in" style={{ animationDelay: "400ms" }}>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min="1"
+                    placeholder="Typical group size"
+                    className="bg-white/50 backdrop-blur-sm"
+                    {...field}
+                    onChange={e => field.onChange(parseInt(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex gap-4 pt-4 animate-fade-in" style={{ animationDelay: "600ms" }}>
+            <Button variant="outline" onClick={onBack} className="w-full">
+              Back
+            </Button>
+            <Button type="submit" className="w-full">
+              Continue
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   );
 };
 
