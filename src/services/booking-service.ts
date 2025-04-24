@@ -1,7 +1,5 @@
-
 import { BaseApiService } from './base-api';
-import { UIBooking, DatabaseBooking } from '@/types';
-import { BookingDB, CreateBookingDTO } from '@/types/bookings';
+import { Booking as UIBooking, BookingDB, CreateBookingDTO } from '@/types/bookings';
 
 /**
  * Service for handling booking-related API calls

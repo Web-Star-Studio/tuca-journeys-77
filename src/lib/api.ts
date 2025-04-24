@@ -132,8 +132,8 @@ export const getUserBookings = async (userId: string) => {
     .from('bookings')
     .select(`
       *,
-      tours:tour_id!tour_id(id, title, description, image_url, duration, price),
-      accommodations:accommodation_id!accommodation_id(id, title, description, image_url, price_per_night)
+      tours:tour_id(*),
+      accommodations:accommodation_id(*)
     `)
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
@@ -144,23 +144,33 @@ export const getUserBookings = async (userId: string) => {
   }
   
   // Map the database bookings to the Booking interface
-  const bookings: Booking[] = data.map(dbBooking => ({
-    id: dbBooking.id.toString(),
-    user_id: dbBooking.user_id,
-    tour_id: dbBooking.tour_id,
-    accommodation_id: dbBooking.accommodation_id,
-    start_date: dbBooking.start_date,
-    end_date: dbBooking.end_date,
-    number_of_guests: dbBooking.guests,
-    total_price: dbBooking.total_price,
-    status: dbBooking.status as 'confirmed' | 'pending' | 'cancelled',
-    notes: dbBooking.special_requests || undefined,
-    created_at: dbBooking.created_at,
-    updated_at: dbBooking.updated_at,
-    // Safely cast the joined data
-    tours: dbBooking.tours as Tour | null,
-    accommodations: dbBooking.accommodations as Accommodation | null
-  }));
+  const bookings = (data || []).map(dbBooking => {
+    // Safely handle potentially null or error relations
+    const tourData = dbBooking.tours || null;
+    const accommodationData = dbBooking.accommodations || null;
+    
+    // Check if the relations returned errors
+    const hasTourError = tourData && typeof tourData === 'object' && 'error' in tourData;
+    const hasAccommodationError = accommodationData && typeof accommodationData === 'object' && 'error' in accommodationData;
+    
+    return {
+      id: dbBooking.id.toString(),
+      user_id: dbBooking.user_id,
+      tour_id: dbBooking.tour_id,
+      accommodation_id: dbBooking.accommodation_id,
+      start_date: dbBooking.start_date,
+      end_date: dbBooking.end_date,
+      number_of_guests: dbBooking.guests,
+      total_price: dbBooking.total_price,
+      status: dbBooking.status as 'confirmed' | 'pending' | 'cancelled',
+      notes: dbBooking.special_requests || undefined,
+      created_at: dbBooking.created_at,
+      updated_at: dbBooking.updated_at,
+      // Handle relation data safely
+      tours: hasTourError ? null : (tourData as Tour | null),
+      accommodations: hasAccommodationError ? null : (accommodationData as Accommodation | null)
+    };
+  });
   
   return bookings;
 };

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import { UIBooking } from "@/types";
+import { Booking as UIBooking } from "@/types/bookings";
 import { useCancelBooking } from "@/hooks/use-cancel-booking";
 
 interface BookingRowProps {

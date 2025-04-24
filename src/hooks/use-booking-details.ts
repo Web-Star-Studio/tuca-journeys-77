@@ -2,7 +2,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { bookingService } from '@/services';
-import { UIBooking } from '@/types';
+import { Booking as UIBooking } from '@/types/bookings';
 import { toast } from 'sonner';
 
 /**

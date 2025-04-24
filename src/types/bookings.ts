@@ -56,3 +56,6 @@ export interface CreateBookingDTO {
   payment_method?: string | null;
   special_requests?: string | null;
 }
+
+// Define DatabaseBooking as an alias of BookingDB for services using this name
+export type DatabaseBooking = BookingDB;

@@ -1,6 +1,7 @@
+
 import { supabase } from '@/lib/supabase';
-import { UIBooking, DatabaseBooking, Tour, Accommodation, UserProfile } from '@/types';
-import { BookingDB, CreateBookingDTO } from '@/types/bookings';
+import { UIBooking, BookingDB, CreateBookingDTO } from '@/types/bookings';
+import { Tour, Accommodation, UserProfile } from '@/types/database';
 import { Package } from '@/data/types/packageTypes';
 
 /**

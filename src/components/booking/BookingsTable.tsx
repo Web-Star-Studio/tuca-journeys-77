@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useBookingsList } from "@/hooks/use-bookings-list";
 import BookingRow from "./BookingRow";
@@ -7,7 +6,7 @@ import BookingEmptyState from "./BookingEmptyState";
 import BookingLoadingState from "./BookingLoadingState";
 import { AlertTriangle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { UIBooking } from "@/types";
+import { Booking as UIBooking } from "@/types/bookings";
 
 /**
  * BookingsTable displays a user's bookings in a tabular format.
