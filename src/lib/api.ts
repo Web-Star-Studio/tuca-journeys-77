@@ -159,14 +159,12 @@ export const getUserBookings = async (userId: string): Promise<UIBooking[]> => {
     let itemType: 'tour' | 'accommodation' | 'package' = 'package';
     let itemName = 'Booking';
     
-    if (dbBooking.tour_id && tourData && !hasTourError) {
+    if (dbBooking.tour_id && tourData && !hasTourError && tourData.title) {
       itemType = 'tour';
-      // Using optional chaining and nullish coalescing to safely access title
-      itemName = (tourData as any)?.title || 'Tour';
-    } else if (dbBooking.accommodation_id && accommodationData && !hasAccommodationError) {
+      itemName = tourData.title;
+    } else if (dbBooking.accommodation_id && accommodationData && !hasAccommodationError && accommodationData.title) {
       itemType = 'accommodation';
-      // Using optional chaining and nullish coalescing to safely access title
-      itemName = (accommodationData as any)?.title || 'Accommodation';
+      itemName = accommodationData.title;
     }
     
     // Create the booking object with correct typing
@@ -189,9 +187,9 @@ export const getUserBookings = async (userId: string): Promise<UIBooking[]> => {
       updated_at: dbBooking.updated_at,
       tour_id: dbBooking.tour_id,
       accommodation_id: dbBooking.accommodation_id,
-      // Safely handle tour and accommodation data
-      tours: hasTourError ? null : tourData,
-      accommodations: hasAccommodationError ? null : accommodationData
+      // Handle tour and accommodation data safely
+      tours: hasTourError ? null : (tourData as Tour | null),
+      accommodations: hasAccommodationError ? null : (accommodationData as Accommodation | null)
     };
     
     return uiBooking;
